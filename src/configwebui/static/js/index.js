@@ -3,12 +3,8 @@
 let editor;
 let editor_is_ready = false;
 let isAdmin = false;
-let fetchingTerminalOutput = false;
-let pendingClearTerminalOutput = false;
 
 const pageRefreshDelay = 400;
-const statusIconDisappearDelay = 400;
-const terminalOutputDisplayRefreshDelay = 200;
 
 const navbarMenu = document.querySelector("#navbar-menu");
 const adminGuestUi = document.querySelector('#admin-guest-ui');
@@ -25,8 +21,6 @@ const presetSelect = document.querySelector('#preset-select');
 const applyPresetBtn = document.querySelector('#apply-preset-btn');
 
 const saveActionButtons = document.querySelectorAll('.save-action');
-const resetActionButtons = document.querySelectorAll('.reset-action');
-const launchActionButtons = document.querySelectorAll('.launch-action');
 const terminateActionButtons = document.querySelectorAll('.terminate-action');
 
 const flashMessagesContent = document.querySelector('#flash-messages-content');
@@ -43,14 +37,6 @@ const jsonCodeContent = document.querySelector('#json-code-content');
 const jsonCodeEdit = document.querySelector('#json-code-edit');
 const jsonCodeContentPlaceholder = document.querySelector('#json-code-content-placeholder');
 const jsonCodeContentPlaceholderLabel = jsonCodeContentPlaceholder ? jsonCodeContentPlaceholder.querySelector('button > span') : null;
-
-const terminalOutputHeading = document.querySelector('#terminal-output-heading');
-const mainProgramRunningIcon = document.querySelector('#main-program-running-icon');
-const mainProgramRunningIconBaseClassName = mainProgramRunningIcon ? mainProgramRunningIcon.className : '';
-const terminalOutputRefreshButton = document.querySelector('#terminal-output-refresh');
-const terminalOutputClearButton = document.querySelector('#terminal-output-clear');
-const terminalOutputDisplay = document.querySelector('#terminal-output-display');
-const terminalOutputDisplayBaseClassName = terminalOutputDisplay ? terminalOutputDisplay.className : '';
 
 let bsAdminLoginModal = null;
 if (adminLoginModalElement && typeof bootstrap !== 'undefined') {
@@ -355,7 +341,7 @@ async function initializeConfigFormEditor(keepValues = false) {
         form_name_root: 'config',
         iconlib: 'fontawesome5',
         theme: 'bootstrap5',
-        show_opt_in: true,
+        show_opt_in: false,
         disable_edit_json: true,
         disable_properties: true,
         disable_collapse: false,
@@ -433,24 +419,6 @@ async function saveConfig() {
     } catch (error) {
         flashMessage('Failed to save configuration. Is the backend service running?', 'danger');
         return false;
-    }
-}
-
-async function resetConfig() {
-    clearFlashMessage();
-    try {
-        const response = await fetch('/api/reset', { method: 'POST' });
-        const data = await response.json();
-        if (data.success && editor) {
-            editor.setValue(data.config);
-            setTimeout(() => changeStyle(), 0);
-            if (jsonCodeEdit) {
-                jsonCodeEdit.value = JSON.stringify(data.config, null, 4);
-            }
-            flashMessage('Configuration reset to saved state.', 'info');
-        }
-    } catch (error) {
-        flashMessage('Failed to reset configuration.', 'danger');
     }
 }
 
@@ -536,27 +504,6 @@ async function adminLogout() {
     }
 }
 
-async function launch() {
-    clearFlashMessage();
-    try {
-        const response = await fetch(`/api/launch`, { method: 'GET' });
-        const data = await response.json();
-        const messageCategory = (data.success ? 'success' : 'danger');
-        const scroll = !data.success;
-        for (const message of data.messages) {
-            flashMessage(message, messageCategory, scroll);
-        }
-        if (!scroll && terminalOutputHeading && terminalOutputDisplay) {
-            terminalOutputHeading.scrollIntoView({ behavior: "smooth" });
-            terminalOutputDisplay.focus();
-        }
-        return data.success;
-    } catch (error) {
-        flashMessage('Failed to launch the main program. Check your backend.', 'danger');
-        return false;
-    }
-}
-
 async function terminate() {
     clearFlashMessage();
     try {
@@ -567,143 +514,11 @@ async function terminate() {
     }
 }
 
-function processCarriageReturn(input) {
-    const lines = input.split('\n');
-    const processedLines = lines.map(line => {
-        const parts = line.split('\r');
-        let result = '';
-        for (let i = parts.length - 1; i >= 0; i--) {
-            result = result + parts[i].substring(result.length);
-        }
-        return result;
-    });
-    return processedLines.join('\n');
-}
-
-async function clearTerminalOutput() {
-    await fetch("/api/clear_terminal_output", { method: 'POST' });
-    pendingClearTerminalOutput = true;
-    if (terminalOutputDisplay) {
-        terminalOutputDisplay.value = '';
-        terminalOutputDisplay.wrap = "on";
-        terminalOutputDisplay.className = terminalOutputDisplayBaseClassName;
-    }
-}
-
-function getTerminalOutput(recentOnly) {
-    if (fetchingTerminalOutput) {
-        return;
-    }
-    let lastRequestComplete = true;
-    const url = "/api/get_terminal_output";
-    const err_message = 'Failed to get output from the main program.';
-    if (!recentOnly && terminalOutputDisplay) {
-        terminalOutputDisplay.value = '';
-    }
-    let textSinceLastLine = '';
-    let textUntilLastLine = terminalOutputDisplay ? terminalOutputDisplay.value : '';
-    if (terminalOutputDisplay) {
-        terminalOutputDisplay.className = terminalOutputDisplayBaseClassName;
-        terminalOutputDisplay.scrollTop = terminalOutputDisplay.scrollHeight;
-    }
-
-    if (mainProgramRunningIcon) {
-        mainProgramRunningIcon.className = mainProgramRunningIconBaseClassName + ' text-primary';
-    }
-
-    const intervalId = setInterval(async () => {
-        if (!lastRequestComplete) {
-            return;
-        }
-        if (mainProgramRunningIcon) {
-            mainProgramRunningIcon.style.display = 'inline-block';
-        }
-        try {
-            lastRequestComplete = false;
-            if (pendingClearTerminalOutput && terminalOutputDisplay) {
-                terminalOutputDisplay.value = '';
-                terminalOutputDisplay.wrap = "on";
-                textSinceLastLine = '';
-                textUntilLastLine = '';
-                pendingClearTerminalOutput = false;
-            }
-            const currentURL = url + '?recent_only=' + (recentOnly ? '1' : '0');
-
-            const response = await fetch(currentURL, { method: 'GET' });
-            const data = await response.json();
-            recentOnly = true;
-            let scroll = false;
-            if (terminalOutputDisplay && terminalOutputDisplay.scrollTop + terminalOutputDisplay.clientHeight >= terminalOutputDisplay.scrollHeight - 10) {
-                scroll = true;
-            }
-
-            const terminalText = textSinceLastLine + data.combined_output;
-            const lastNewlineIndex = terminalText.lastIndexOf('\n');
-            if (lastNewlineIndex !== -1) {
-                textUntilLastLine += processCarriageReturn(terminalText.substring(0, lastNewlineIndex + 1));
-                textSinceLastLine = terminalText.substring(lastNewlineIndex + 1);
-            } else {
-                textSinceLastLine = terminalText;
-            }
-
-            if (terminalOutputDisplay) {
-                terminalOutputDisplay.wrap = "off";
-                terminalOutputDisplay.value = textUntilLastLine + processCarriageReturn(textSinceLastLine);
-            }
-
-            if (data.has_warning) {
-                if (mainProgramRunningIcon) mainProgramRunningIcon.className = mainProgramRunningIconBaseClassName + ' text-warning';
-                if (terminalOutputDisplay) terminalOutputDisplay.className = terminalOutputDisplayBaseClassName + ' text-warning';
-            }
-            if (!data.running) {
-                if (data.state) {
-                    if (!data.has_warning) {
-                        if (terminalOutputDisplay) terminalOutputDisplay.className = terminalOutputDisplayBaseClassName + ' text-success';
-                        if (mainProgramRunningIcon) mainProgramRunningIcon.className = mainProgramRunningIconBaseClassName + ' text-success';
-                    }
-                } else {
-                    if (terminalOutputDisplay) terminalOutputDisplay.className = terminalOutputDisplayBaseClassName + ' text-danger';
-                    if (mainProgramRunningIcon) mainProgramRunningIcon.className = mainProgramRunningIconBaseClassName + ' text-danger';
-                }
-                for (const message of data.messages) {
-                    if (terminalOutputDisplay) terminalOutputDisplay.value += '\n' + message + '\n';
-                }
-                if (mainProgramRunningIcon) {
-                    setTimeout(() => { mainProgramRunningIcon.style.display = 'none'; }, statusIconDisappearDelay);
-                }
-                fetchingTerminalOutput = false;
-                clearInterval(intervalId);
-            }
-            if (scroll && terminalOutputDisplay) {
-                terminalOutputDisplay.scrollTop = terminalOutputDisplay.scrollHeight;
-            }
-        } catch (error) {
-            if (terminalOutputDisplay) terminalOutputDisplay.className = terminalOutputDisplayBaseClassName + ' text-danger';
-            if (mainProgramRunningIcon) mainProgramRunningIcon.className = mainProgramRunningIconBaseClassName + ' text-danger';
-            flashMessage(err_message, 'danger');
-            if (mainProgramRunningIcon) {
-                setTimeout(() => { mainProgramRunningIcon.style.display = 'none'; }, statusIconDisappearDelay);
-            }
-            fetchingTerminalOutput = false;
-            clearInterval(intervalId);
-        }
-        lastRequestComplete = true;
-    }, terminalOutputDisplayRefreshDelay);
-    fetchingTerminalOutput = true;
-}
-
 // Event Listeners
 saveActionButtons.forEach(button => {
     button.addEventListener('click', async () => {
         collapseNavbar();
         await saveConfig();
-    });
-});
-
-resetActionButtons.forEach(button => {
-    button.addEventListener('click', async () => {
-        collapseNavbar();
-        await resetConfig();
     });
 });
 
@@ -734,15 +549,6 @@ if (adminLogoutBtn) {
     });
 }
 
-launchActionButtons.forEach(button => {
-    button.addEventListener('click', async () => {
-        collapseNavbar();
-        if (await launch()) {
-            getTerminalOutput(true);
-        }
-    });
-});
-
 terminateActionButtons.forEach(button => {
     button.addEventListener('click', async () => {
         collapseNavbar();
@@ -759,18 +565,6 @@ if (jsonCodeExpandButton) {
 if (jsonCodeCollapseButton) {
     jsonCodeCollapseButton.addEventListener('click', () => {
         toggleJsonCodeContent('hide');
-    });
-}
-
-if (terminalOutputRefreshButton) {
-    terminalOutputRefreshButton.addEventListener('click', () => {
-        getTerminalOutput(false);
-    });
-}
-
-if (terminalOutputClearButton) {
-    terminalOutputClearButton.addEventListener('click', () => {
-        clearTerminalOutput();
     });
 }
 

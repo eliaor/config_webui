@@ -65,19 +65,7 @@
                                     <span>Save changes</span>
                                 </button>
                             </li>
-                            <li>
-                                <button class="dropdown-item menu-danger btn-danger reset-action" type="button">
-                                    <span><i class="fas fa-undo text-danger"></i></span>
-                                    <span>Reset</span>
-                                </button>
-                            </li>
                             <li class="dropdown-divider"></li>
-                            <li>
-                                <button class="dropdown-item menu-success btn-success launch-action" type="button">
-                                    <span><i class="fas fa-play text-success"></i></span>
-                                    <span>Launch main program</span>
-                                </button>
-                            </li>
                             <li>
                                 <button class="dropdown-item menu-danger btn-danger terminate-action" type="button">
                                     <span><i class="fas fa-power-off text-danger"></i></span>
@@ -157,12 +145,6 @@
                                         <span>Save</span>
                                     </button>
                                 </div>
-                                <div class="col-5 col-lg-4 col-xl-3">
-                                    <button class="btn btn-danger w-100 reset-action" type="button" title="Reset">
-                                        <span><i class="fas fa-undo"></i></span>
-                                        <span>Reset</span>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         <div class="collapse show" id="config-form-content-placeholder">
@@ -183,15 +165,6 @@
                                         <p class="placeholder-glow"><input class="form-control placeholder" type="text"
                                                 disabled></p>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-between justify-content-lg-end form-actions placeholder-wave"
-                                id="config-form-actions-placeholder">
-                                <div class="col-5 col-lg-4 col-xl-3">
-                                    <button class="btn btn-primary w-100 disabled placeholder" type="button"></button>
-                                </div>
-                                <div class="col-5 col-lg-4 col-xl-3">
-                                    <button class="btn btn-danger w-100 disabled placeholder" type="button"></button>
                                 </div>
                             </div>
                         </div>
@@ -225,44 +198,6 @@
                                 <button class="btn btn-secondary bg-light w-100" disabled>
                                     <span class="h3">Hidden</span>
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Terminal output -->
-                <div class="row mt-3" id="terminal-output-container">
-                    <div class="col" id="terminal-output">
-                        <div class="row" id="terminal-output-heading">
-                            <div class="col" id="terminal-output-title">
-                                <h2>
-                                    <span>Terminal Output</span>
-                                    <span><i class="fas fa-terminal"></i></span>
-                                    <span class="spinner-border text-primary" role="status"
-                                        id="main-program-running-icon" style="display: none;"></span>
-                                </h2>
-                            </div>
-                            <div class="col-auto mb-1 mb-lg-0 d-flex justify-content-end align-items-start"
-                                id="terminal-output-control">
-                                <div class="btn-group" role="group" aria-label="Control"
-                                    id="terminal-output-control-group">
-                                    <button class="btn btn-success launch-action" type="button"
-                                        title="Launch main program">
-                                        <span><i class="fas fa-play"></i></span>
-                                    </button>
-                                    <button class="btn btn-primary" type="button" id="terminal-output-refresh"
-                                        title="Refresh terminal"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="btn btn-danger" type="button" id="terminal-output-clear"
-                                        title="Clear terminal"><i class="fas fa-eraser"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" id="terminal-output-content">
-                            <div class="col">
-                                <textarea id="terminal-output-display" class="form-control code-text"
-                                    title="Terminal output"
-                                    placeholder="After you launch the main program, the output will show here. Resets when refreshing the page."
-                                    readonly></textarea>
                             </div>
                         </div>
                     </div>
