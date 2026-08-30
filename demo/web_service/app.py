@@ -1,15 +1,12 @@
-"""
-Example 1: Enterprise Web Service Configuration Manager
-"""
-
 import os
 import sys
 
-try:
-    from configwebui import ConfigEditor
-except ImportError:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
-    from configwebui import ConfigEditor
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_SRC = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "src"))
+if os.path.exists(REPO_SRC):
+    sys.path.insert(0, REPO_SRC)
+
+from configwebui import ConfigEditor
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SCHEMA_FILE = os.path.join(BASE_DIR, "schema", "schema.json")

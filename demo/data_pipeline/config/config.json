@@ -1,21 +1,21 @@
 {
     "processing": {
-        "batch_size": 5000,
-        "buffer_size": 20000,
-        "compression": "zstd",
-        "parallel_workers": 16
+        "batch_size": 2000,
+        "buffer_size": 8000,
+        "compression": "snappy",
+        "parallel_workers": 8
     },
     "security": {
         "enable_encryption": true,
-        "kms_key_id": "kms-arn-lake-ingestion-01"
+        "kms_key_id": "kms-arn-streaming-02"
     },
     "source": {
-        "endpoint": "s3.us-east-1.amazonaws.com",
-        "topic_or_bucket": "raw-data-lake-incoming",
-        "type": "s3"
+        "endpoint": "kafka-broker.internal:9092",
+        "topic_or_bucket": "events.realtime.telemetry",
+        "type": "kafka"
     },
     "system_protected": {
-        "max_throughput_mb_s": 500,
-        "pipeline_cluster_id": "ETL-BATCH-LAKE-01"
+        "max_throughput_mb_s": 200,
+        "pipeline_cluster_id": "ETL-STREAM-KAFKA-02"
     }
 }

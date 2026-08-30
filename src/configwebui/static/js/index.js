@@ -5,7 +5,6 @@ let editor_is_ready = false;
 let isAdmin = false;
 
 const pageRefreshDelay = 400;
-const statusIconDisappearDelay = 800;
 
 const navbarMenu = document.querySelector("#navbar-menu");
 const adminGuestUi = document.querySelector('#admin-guest-ui');

@@ -1,41 +1,41 @@
 {
-  "server": {
-    "host": "127.0.0.1",
-    "port": 8000,
-    "workers": 1,
-    "timeout_seconds": 60.0,
-    "enable_tls": false
-  },
-  "database": {
-    "engine": "sqlite",
-    "host": "localhost",
-    "port": 5432,
-    "database_name": "dev_local.db",
-    "username": "dev_user",
-    "password": "dev_password",
-    "pool_size": 5
-  },
-  "caching": {
-    "enabled": true,
-    "backend": "memory",
-    "redis_url": "redis://localhost:6379/0",
-    "default_ttl_seconds": 300
-  },
-  "logging": {
-    "log_level": "DEBUG",
-    "log_to_file": false,
-    "file_path": "logs/dev.log",
-    "json_format": false
-  },
-  "features": {
-    "beta_dashboard": true,
-    "email_notifications": false,
-    "maintenance_mode": false
-  },
-  "system_protected": {
-    "cluster_uuid": "CLS-DEV-LOCAL-01",
-    "environment_tier": "Development",
-    "max_requests_per_minute": 500,
-    "license_key": "DEV-FREE-COMMUNITY-KEY"
-  }
+    "caching": {
+        "backend": "redis",
+        "default_ttl_seconds": 7200,
+        "enabled": true,
+        "redis_url": "redis://elasticache-cluster.prod.internal:6379/0"
+    },
+    "database": {
+        "database_name": "app_production",
+        "engine": "postgresql",
+        "host": "aurora-pg-primary.prod.internal",
+        "password": "super_secure_vault_token_prod",
+        "pool_size": 100,
+        "port": 5432,
+        "username": "prod_master"
+    },
+    "features": {
+        "beta_dashboard": false,
+        "email_notifications": true,
+        "maintenance_mode": false
+    },
+    "logging": {
+        "file_path": "/var/log/app/production.json.log",
+        "json_format": true,
+        "log_level": "WARNING",
+        "log_to_file": true
+    },
+    "server": {
+        "enable_tls": true,
+        "host": "0.0.0.0",
+        "port": 443,
+        "timeout_seconds": 15,
+        "workers": 16
+    },
+    "system_protected": {
+        "cluster_uuid": "CLS-9901-PROD-US-EAST",
+        "environment_tier": "Production",
+        "license_key": "ENT-PROD-2026-HIGH-AVAILABILITY",
+        "max_requests_per_minute": 50000
+    }
 }

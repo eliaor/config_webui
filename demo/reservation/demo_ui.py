@@ -5,14 +5,12 @@ Run:  python demo/reservation/demo_ui.py
 import os
 import sys
 
-# Allow running from repo root or from inside this directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_SRC = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "src"))
+if os.path.exists(REPO_SRC):
+    sys.path.insert(0, REPO_SRC)
 
-try:
-    from configwebui import ConfigEditor
-except ImportError:
-    sys.path.insert(0, os.path.join(BASE_DIR, "..", "..", "..", "src"))
-    from configwebui import ConfigEditor
+from configwebui import ConfigEditor
 
 # Import the backend worker from the same directory
 sys.path.insert(0, BASE_DIR)

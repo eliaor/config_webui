@@ -2,7 +2,7 @@
     "applicant_information": {
         "age": 34,
         "email": "bob.j@example.com",
-        "gender": "Other",
+        "gender": "Male",
         "name": "Bob Johnson",
         "phone": "+1 5559876543"
     },

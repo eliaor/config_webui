@@ -1,19 +1,19 @@
 {
-  "model": {
-    "architecture": "ResNet-50",
-    "pretrained_weights": true,
-    "num_classes": 100
-  },
-  "hyperparameters": {
-    "epochs": 10,
-    "batch_size": 32,
-    "learning_rate": 0.001,
-    "optimizer": "AdamW",
-    "weight_decay": 0.01
-  },
-  "hardware_protected": {
-    "gpu_device_id": "NVIDIA-RTX-4090-DEV",
-    "max_vram_gb": 24,
-    "distributed_nodes": 1
-  }
+    "hardware_protected": {
+        "distributed_nodes": 1,
+        "gpu_device_id": "CPU-MOCK-DEV",
+        "max_vram_gb": 8
+    },
+    "hyperparameters": {
+        "batch_size": 64,
+        "epochs": 3,
+        "learning_rate": 0.005,
+        "optimizer": "Adam",
+        "weight_decay": 0.0001
+    },
+    "model": {
+        "architecture": "Custom-CNN",
+        "num_classes": 10,
+        "pretrained_weights": false
+    }
 }

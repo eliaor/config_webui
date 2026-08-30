@@ -1,15 +1,12 @@
-"""
-Example 2: Data Pipeline Configuration with Custom Business Rule Validation
-"""
-
 import os
 import sys
 
-try:
-    from configwebui import ConfigEditor, ResultStatus
-except ImportError:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
-    from configwebui import ConfigEditor, ResultStatus
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_SRC = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "src"))
+if os.path.exists(REPO_SRC):
+    sys.path.insert(0, REPO_SRC)
+
+from configwebui import ConfigEditor, ResultStatus
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SCHEMA_FILE = os.path.join(BASE_DIR, "schema", "schema.json")

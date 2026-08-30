@@ -1,15 +1,12 @@
-"""
-Example 3: Machine Learning Training Manager with Task Runner
-"""
-
 import os
 import sys
 
-try:
-    from configwebui import ConfigEditor
-except ImportError:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
-    from configwebui import ConfigEditor
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_SRC = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "src"))
+if os.path.exists(REPO_SRC):
+    sys.path.insert(0, REPO_SRC)
+
+from configwebui import ConfigEditor
 
 try:
     from .trainer import train_model
