@@ -8,16 +8,14 @@ import sys
 try:
     from configwebui import ConfigEditor
 except ImportError:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
     from configwebui import ConfigEditor
 
 try:
     from .trainer import train_model
 except ImportError:
-    try:
-        from trainer import train_model
-    except ImportError:
-        from examples.model_training.trainer import train_model
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from trainer import train_model
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SCHEMA_FILE = os.path.join(BASE_DIR, "schema", "schema.json")

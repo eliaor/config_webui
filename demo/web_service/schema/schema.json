@@ -93,6 +93,9 @@
     "caching": {
       "title": "Caching & Sessions",
       "type": "object",
+      "options": {
+        "collapsed": true
+      },
       "properties": {
         "enabled": {
           "title": "Enable Caching",
@@ -150,6 +153,9 @@
     "features": {
       "title": "Feature Flags",
       "type": "object",
+      "options": {
+        "collapsed": true
+      },
       "properties": {
         "beta_dashboard": {
           "title": "Beta Dashboard",
@@ -172,6 +178,9 @@
       "title": "System & Admin Controls (Read-Only)",
       "description": "Sensitive infrastructure parameters. Requires Admin Login to edit.",
       "type": "object",
+      "options": {
+        "collapsed": true
+      },
       "properties": {
         "cluster_uuid": {
           "title": "Cluster UUID",
@@ -211,3 +220,4 @@
     "system_protected"
   ]
 }
+

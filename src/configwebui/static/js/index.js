@@ -5,6 +5,7 @@ let editor_is_ready = false;
 let isAdmin = false;
 
 const pageRefreshDelay = 400;
+const statusIconDisappearDelay = 800;
 
 const navbarMenu = document.querySelector("#navbar-menu");
 const adminGuestUi = document.querySelector('#admin-guest-ui');
@@ -432,20 +433,28 @@ async function applySelectedPreset() {
     }
 
     try {
-        const response = await fetch(`/api/presets/${encodeURIComponent(selectedPreset)}`, {
-            method: 'GET'
+        // POST to server to apply preset (server uses is_admin=True internally for presets).
+        // This updates the server's in-memory config so a subsequent guest Save won't be
+        // blocked by readOnly change detection (the server config now matches the preset).
+        const applyResponse = await fetch(`/api/presets/${encodeURIComponent(selectedPreset)}/apply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ save: true })
         });
-        const data = await response.json();
-        if (data.success && editor) {
-            editor.setValue(data.config);
-            setTimeout(() => changeStyle(), 0);
-            if (jsonCodeEdit) {
-                jsonCodeEdit.value = JSON.stringify(data.config, null, 4);
-            }
-            flashMessage(`Loaded preset "<strong>${selectedPreset}</strong>". Click <strong>Save</strong> to persist to config file.`, 'info');
-        } else {
-            flashMessage(`Failed to load preset "${selectedPreset}".`, 'danger');
+        const applyData = await applyResponse.json();
+        if (!applyData.success) {
+            flashMessage(`Failed to apply preset "${selectedPreset}": ${(applyData.messages || []).join(' ')}`, 'danger');
+            return;
         }
+
+        // Reload editor from the freshly-applied server config (and correct schema for admin status).
+        await initializeConfigFormEditor(false);
+
+        flashMessage(
+            `Preset "<strong>${selectedPreset}</strong>" applied and saved. ` +
+            `Click <strong>Save</strong> again to overwrite with any further edits.`,
+            'success'
+        );
     } catch (error) {
         flashMessage('Failed to apply preset from server.', 'danger');
     }

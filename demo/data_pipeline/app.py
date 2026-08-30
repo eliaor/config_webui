@@ -8,7 +8,7 @@ import sys
 try:
     from configwebui import ConfigEditor, ResultStatus
 except ImportError:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
     from configwebui import ConfigEditor, ResultStatus
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
