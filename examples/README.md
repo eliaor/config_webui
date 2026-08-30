@@ -1,31 +1,50 @@
-# pyConfigWebUI Examples
+# pyConfigWebUI Examples & Demos
 
-This directory contains standalone, ready-to-run examples demonstrating different features of **pyConfigWebUI**.
+This directory demonstrates the recommended architectural pattern for **pyConfigWebUI**:
+- **One Unified Schema** (`schema.json`): A single, comprehensive JSON Schema covering all components (Server, Database, Caching, Logging, Features, and Admin-Protected parameters).
+- **Multiple Full Presets** (`presets/*.json`): Complete, standalone configuration profiles for different deployment tiers (Development, Staging, Production HA, and Testing CI).
+- **One Active Configuration File** (`config.json`): The single active configuration file edited in the UI and read by the application.
 
-## Examples Overview
+---
 
-| File | Description | Key Features Demonstrated |
-|---|---|---|
-| [`example_01_basic_usage.py`](example_01_basic_usage.py) | Minimal quick start | JSON Schema form generation, file auto-save, split view |
-| [`example_02_presets_and_admin_mode.py`](example_02_presets_and_admin_mode.py) | Configuration Presets & Admin Security | Named presets switching, `readOnly` fields, Admin login & unlock |
-| [`example_03_custom_validation_and_storage.py`](example_03_custom_validation_and_storage.py) | Advanced validation & storage | Custom cross-field validation (`extra_validation_func`), `save_func`, `load_func` |
-| [`example_04_task_execution_with_logs.py`](example_04_task_execution_with_logs.py) | Background task execution | Attaching `main_entry`, streaming stdout/stderr terminal logs |
-| [`example_05_rich_schema_forms.py`](example_05_rich_schema_forms.py) | Rich Schema Controls | Nested objects, dynamic array tables, enums, passwords, textareas |
+## 📁 File Structure
 
-## Running the Examples
-
-Ensure requirements or package is installed:
-```bash
-pip install -r requirements.txt
+```
+examples/
+├── schema.json               # The single unified application schema
+├── config.json               # The single active configuration file
+├── presets/                  # Multiple complete preset configurations
+│   ├── development.json      # Local development preset (SQLite, debug logging)
+│   ├── staging.json          # Staging cluster preset (PostgreSQL, Redis)
+│   ├── production.json       # Production HA preset (high pool size, TLS, rate limits)
+│   └── testing_ci.json       # Ephemeral CI testing preset (in-memory)
+├── run_basic_editor.py       # Basic editor with preset switching & admin login
+├── run_with_custom_validation.py # Editor with custom business rule validation
+├── run_with_task_runner.py   # Editor with background service execution & live logs
+└── README.md
 ```
 
-Run any example:
+---
+
+## 🚀 Running the Examples
+
+### 1. Basic Editor with Presets & Admin Security
+Loads `schema.json`, registers all presets, and saves to `config.json`:
 ```bash
-python examples/example_01_basic_usage.py
-python examples/example_02_presets_and_admin_mode.py
-python examples/example_03_custom_validation_and_storage.py
-python examples/example_04_task_execution_with_logs.py
-python examples/example_05_rich_schema_forms.py
+python examples/run_basic_editor.py
+```
+- Open `http://localhost:5000/` in your browser.
+- Switch between **Development**, **Staging**, **Production (High Availability)**, and **Testing (CI)**.
+- Notice `system_protected` fields are locked for guests. Click **Admin Login** (Password: `superadminsecret`) to unlock and edit them.
+
+### 2. Editor with Custom Multi-Field Business Validation
+Adds custom cross-field validation rules (e.g. requiring TLS in Production, validating Redis URL format):
+```bash
+python examples/run_with_custom_validation.py
 ```
 
-Then open your browser at the URL shown in terminal (default: `http://localhost:5000/`).
+### 3. Editor with Live Background Task Execution & Logs
+Hooks a Python startup worker to read `config.json` and stream live console logs to the web interface:
+```bash
+python examples/run_with_task_runner.py
+```

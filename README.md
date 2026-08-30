@@ -220,25 +220,37 @@ editor = ConfigEditor(
 
 ---
 
-## 📂 Runnable Examples
+## 📂 Runnable Examples & Demos
 
-Explore the complete runnable examples in the [`examples/`](examples/) directory:
+The repository demonstrates the recommended architecture: **one unified schema**, **multiple complete presets**, and **one active config file**.
 
-- [`example_01_basic_usage.py`](examples/example_01_basic_usage.py): Minimal quick start with schema validation.
-- [`example_02_presets_and_admin_mode.py`](examples/example_02_presets_and_admin_mode.py): Configuration preset switching and Admin unlocking.
-- [`example_03_custom_validation_and_storage.py`](examples/example_03_custom_validation_and_storage.py): Custom validation and custom persistence.
-- [`example_04_task_execution_with_logs.py`](examples/example_04_task_execution_with_logs.py): Background tasks with live terminal logs.
-- [`example_05_rich_schema_forms.py`](examples/example_05_rich_schema_forms.py): Advanced form controls (arrays, nested objects, passwords, textareas).
+Check out the [`examples/`](examples/) directory:
+- [`examples/schema.json`](examples/schema.json): The unified application schema (Server, Database, Cache, Logging, Features, System Admin).
+- [`examples/presets/`](examples/presets/): Complete environment configurations:
+  - `development.json`: Local SQLite, debug logging, local ports.
+  - `staging.json`: Staging cluster with PostgreSQL and Redis.
+  - `production.json`: High availability cluster with rate limiting and TLS.
+  - `testing_ci.json`: Ephemeral in-memory CI testing setup.
+- [`examples/config.json`](examples/config.json): The active configuration file.
 
-Run any example:
-```bash
-python examples/example_01_basic_usage.py
-```
+### Runnable Scripts
 
-Or run the interactive reservation system demo:
-```bash
-python demo/demo_ui.py
-```
+1. **Basic Editor with Presets & Admin Security**:
+   ```bash
+   python examples/run_basic_editor.py
+   ```
+2. **Editor with Custom Business Validation**:
+   ```bash
+   python examples/run_with_custom_validation.py
+   ```
+3. **Editor with Task Execution & Live Terminal Logs**:
+   ```bash
+   python examples/run_with_task_runner.py
+   ```
+4. **Interactive Reservation Demo**:
+   ```bash
+   python demo/demo_ui.py
+   ```
 
 ---
 

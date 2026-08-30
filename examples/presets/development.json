@@ -1,0 +1,41 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8000,
+    "workers": 1,
+    "timeout_seconds": 60.0,
+    "enable_tls": false
+  },
+  "database": {
+    "engine": "sqlite",
+    "host": "localhost",
+    "port": 5432,
+    "database_name": "dev_local.db",
+    "username": "dev_user",
+    "password": "dev_password",
+    "pool_size": 5
+  },
+  "caching": {
+    "enabled": true,
+    "backend": "memory",
+    "redis_url": "redis://localhost:6379/0",
+    "default_ttl_seconds": 300
+  },
+  "logging": {
+    "log_level": "DEBUG",
+    "log_to_file": false,
+    "file_path": "logs/dev.log",
+    "json_format": false
+  },
+  "features": {
+    "beta_dashboard": true,
+    "email_notifications": false,
+    "maintenance_mode": false
+  },
+  "system_protected": {
+    "cluster_uuid": "CLS-DEV-LOCAL-01",
+    "environment_tier": "Development",
+    "max_requests_per_minute": 500,
+    "license_key": "DEV-FREE-COMMUNITY-KEY"
+  }
+}

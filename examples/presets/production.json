@@ -1,0 +1,41 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 443,
+    "workers": 16,
+    "timeout_seconds": 15.0,
+    "enable_tls": true
+  },
+  "database": {
+    "engine": "postgresql",
+    "host": "aurora-pg-primary.prod.internal",
+    "port": 5432,
+    "database_name": "app_production",
+    "username": "prod_master",
+    "password": "super_secure_vault_token_prod",
+    "pool_size": 100
+  },
+  "caching": {
+    "enabled": true,
+    "backend": "redis",
+    "redis_url": "redis://elasticache-cluster.prod.internal:6379/0",
+    "default_ttl_seconds": 7200
+  },
+  "logging": {
+    "log_level": "WARNING",
+    "log_to_file": true,
+    "file_path": "/var/log/app/production.json.log",
+    "json_format": true
+  },
+  "features": {
+    "beta_dashboard": false,
+    "email_notifications": true,
+    "maintenance_mode": false
+  },
+  "system_protected": {
+    "cluster_uuid": "CLS-9901-PROD-US-EAST",
+    "environment_tier": "Production",
+    "max_requests_per_minute": 50000,
+    "license_key": "ENT-PROD-2026-HIGH-AVAILABILITY"
+  }
+}

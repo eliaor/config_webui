@@ -1,0 +1,41 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "workers": 4,
+    "timeout_seconds": 30.0,
+    "enable_tls": true
+  },
+  "database": {
+    "engine": "postgresql",
+    "host": "staging-db.internal",
+    "port": 5432,
+    "database_name": "app_staging",
+    "username": "stage_admin",
+    "password": "stage_db_password_883",
+    "pool_size": 15
+  },
+  "caching": {
+    "enabled": true,
+    "backend": "redis",
+    "redis_url": "redis://staging-cache.internal:6379/1",
+    "default_ttl_seconds": 1800
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_to_file": true,
+    "file_path": "/var/log/app/staging.log",
+    "json_format": true
+  },
+  "features": {
+    "beta_dashboard": true,
+    "email_notifications": true,
+    "maintenance_mode": false
+  },
+  "system_protected": {
+    "cluster_uuid": "CLS-STAGE-CLUSTER-02",
+    "environment_tier": "Staging",
+    "max_requests_per_minute": 5000,
+    "license_key": "STAGE-NONPROD-KEY-2026"
+  }
+}

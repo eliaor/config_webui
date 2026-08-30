@@ -1,0 +1,41 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 9000,
+    "workers": 1,
+    "timeout_seconds": 5.0,
+    "enable_tls": false
+  },
+  "database": {
+    "engine": "sqlite",
+    "host": "localhost",
+    "port": 5432,
+    "database_name": ":memory:",
+    "username": "ci_test",
+    "password": "ci_test_password",
+    "pool_size": 2
+  },
+  "caching": {
+    "enabled": false,
+    "backend": "memory",
+    "redis_url": "redis://localhost:6379/0",
+    "default_ttl_seconds": 0
+  },
+  "logging": {
+    "log_level": "DEBUG",
+    "log_to_file": false,
+    "file_path": "logs/ci.log",
+    "json_format": false
+  },
+  "features": {
+    "beta_dashboard": true,
+    "email_notifications": false,
+    "maintenance_mode": false
+  },
+  "system_protected": {
+    "cluster_uuid": "CLS-CI-RUNNER-EPHEMERAL",
+    "environment_tier": "Testing",
+    "max_requests_per_minute": 1000,
+    "license_key": "CI-TEST-AUTOMATION-LICENSE"
+  }
+}

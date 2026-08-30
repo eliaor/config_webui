@@ -9,13 +9,14 @@ try:
 except ImportError:
     from src.configwebui import ConfigEditor
 
-CONFIG_FILE = "demo/config/main.json"
-SCHEMA_FILE = "demo/schema/main.json"
+DEMO_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(DEMO_DIR, "config.json")
+SCHEMA_FILE = os.path.join(DEMO_DIR, "schema.json")
 
 PRESETS = {
-    "Default": "demo/presets/default.json",
-    "Christmas Special": "demo/presets/christmas.json",
-    "VIP Applicant": "demo/presets/vip.json",
+    "Default": os.path.join(DEMO_DIR, "presets", "default.json"),
+    "Christmas Special": os.path.join(DEMO_DIR, "presets", "christmas.json"),
+    "VIP Applicant": os.path.join(DEMO_DIR, "presets", "vip.json"),
 }
 
 CONFIG_EDITOR = ConfigEditor(
