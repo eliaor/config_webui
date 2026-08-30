@@ -52,7 +52,7 @@ def submit_reservation(applicant_information: dict, reservation_details: dict, s
 
 
 def main():
-    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    config_path = os.path.join(os.path.dirname(__file__), "config", "config.json")
     main_config = load_json(config_path)
 
     user_credential = main_config.get("user_credential", {})

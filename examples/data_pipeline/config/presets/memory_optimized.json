@@ -1,0 +1,21 @@
+{
+  "source": {
+    "type": "rest_api",
+    "endpoint": "https://api.upstream-partner.internal/v2/feed",
+    "topic_or_bucket": "partner_feed"
+  },
+  "processing": {
+    "batch_size": 50,
+    "buffer_size": 200,
+    "parallel_workers": 2,
+    "compression": "gzip"
+  },
+  "security": {
+    "enable_encryption": false,
+    "kms_key_id": ""
+  },
+  "system_protected": {
+    "max_throughput_mb_s": 25,
+    "pipeline_cluster_id": "ETL-LIGHTWEIGHT-EDGE"
+  }
+}

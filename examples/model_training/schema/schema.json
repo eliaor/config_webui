@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Machine Learning Model Training Configuration",
+  "type": "object",
+  "properties": {
+    "model": {
+      "title": "Model Architecture",
+      "type": "object",
+      "properties": {
+        "architecture": {
+          "title": "Architecture Name",
+          "type": "string",
+          "enum": ["ResNet-50", "EfficientNet-B4", "Transformer-Encoder", "Custom-CNN"],
+          "default": "ResNet-50"
+        },
+        "pretrained_weights": {
+          "title": "Use Pretrained Weights",
+          "type": "boolean",
+          "default": true
+        },
+        "num_classes": {
+          "title": "Number of Classes",
+          "type": "integer",
+          "default": 10,
+          "minimum": 2
+        }
+      },
+      "required": ["architecture", "num_classes"]
+    },
+    "hyperparameters": {
+      "title": "Training Hyperparameters",
+      "type": "object",
+      "properties": {
+        "epochs": {
+          "title": "Epochs",
+          "type": "integer",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "batch_size": {
+          "title": "Batch Size",
+          "type": "integer",
+          "default": 32,
+          "minimum": 1,
+          "maximum": 1024
+        },
+        "learning_rate": {
+          "title": "Learning Rate",
+          "type": "number",
+          "default": 0.001,
+          "minimum": 0.000001,
+          "maximum": 1.0
+        },
+        "optimizer": {
+          "title": "Optimizer",
+          "type": "string",
+          "enum": ["AdamW", "SGD", "RMSprop", "Adam"],
+          "default": "AdamW"
+        },
+        "weight_decay": {
+          "title": "Weight Decay",
+          "type": "number",
+          "default": 0.01
+        }
+      },
+      "required": ["epochs", "batch_size", "learning_rate"]
+    },
+    "hardware_protected": {
+      "title": "Hardware & Cluster Resources (Read-Only)",
+      "type": "object",
+      "properties": {
+        "gpu_device_id": {
+          "title": "Allocated GPU Device ID",
+          "type": "string",
+          "readOnly": true,
+          "default": "NVIDIA-A100-80GB-NODE01"
+        },
+        "max_vram_gb": {
+          "title": "Max VRAM (GB)",
+          "type": "integer",
+          "readOnly": true,
+          "default": 80
+        },
+        "distributed_nodes": {
+          "title": "Distributed Nodes",
+          "type": "integer",
+          "readOnly": true,
+          "default": 1
+        }
+      },
+      "required": ["gpu_device_id"]
+    }
+  },
+  "required": ["model", "hyperparameters", "hardware_protected"]
+}

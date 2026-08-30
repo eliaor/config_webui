@@ -220,34 +220,50 @@ editor = ConfigEditor(
 
 ---
 
-## 📂 Runnable Examples & Demos
+## 📂 Example Project Folders & Demos
 
-The repository demonstrates the recommended architecture: **one unified schema**, **multiple complete presets**, and **one active config file**.
+Each example is organized as its own self-contained **project folder** with dedicated `schema/` (unified JSON schema), `config/` (active config and complete preset files), and `app.py` runner:
 
-Check out the [`examples/`](examples/) directory:
-- [`examples/schema.json`](examples/schema.json): The unified application schema (Server, Database, Cache, Logging, Features, System Admin).
-- [`examples/presets/`](examples/presets/): Complete environment configurations:
-  - `development.json`: Local SQLite, debug logging, local ports.
-  - `staging.json`: Staging cluster with PostgreSQL and Redis.
-  - `production.json`: High availability cluster with rate limiting and TLS.
-  - `testing_ci.json`: Ephemeral in-memory CI testing setup.
-- [`examples/config.json`](examples/config.json): The active configuration file.
+```
+examples/
+├── web_service/               # Enterprise Web Service Config Project
+│   ├── app.py                 # UI Runner with Presets & Admin Security
+│   ├── schema/schema.json     # Unified schema (server, db, cache, logging, security)
+│   └── config/
+│       ├── config.json        # Active configuration file
+│       └── presets/           # Presets (development, staging, production, testing_ci)
+│
+├── data_pipeline/             # Ingestion & ETL Data Pipeline Project
+│   ├── app.py                 # UI Runner with Custom Cross-Field Business Validation
+│   ├── schema/schema.json     # Unified ETL schema (sources, batches, compression, KMS)
+│   └── config/
+│       ├── config.json        # Active configuration file
+│       └── presets/           # Presets (batch_etl, realtime_streaming, memory_optimized)
+│
+└── model_training/            # ML Training & Hyperparameter Tuning Project
+    ├── app.py                 # UI Runner with Background Task Execution
+    ├── trainer.py             # Background training worker streaming stdout logs
+    ├── schema/schema.json     # Unified ML schema (architecture, epochs, optimizer, GPU)
+    └── config/
+        ├── config.json        # Active configuration file
+        └── presets/           # Presets (quick_experiment, standard_training, high_accuracy_gpu)
+```
 
-### Runnable Scripts
+### Running the Projects
 
-1. **Basic Editor with Presets & Admin Security**:
+1. **Enterprise Web Service** (Presets & Admin Mode):
    ```bash
-   python examples/run_basic_editor.py
+   python examples/web_service/app.py
    ```
-2. **Editor with Custom Business Validation**:
+2. **Data Pipeline** (Custom Business Validation):
    ```bash
-   python examples/run_with_custom_validation.py
+   python examples/data_pipeline/app.py
    ```
-3. **Editor with Task Execution & Live Terminal Logs**:
+3. **ML Model Training** (Task Execution & Live Terminal Logs):
    ```bash
-   python examples/run_with_task_runner.py
+   python examples/model_training/app.py
    ```
-4. **Interactive Reservation Demo**:
+4. **Interactive Reservation System Demo**:
    ```bash
    python demo/demo_ui.py
    ```

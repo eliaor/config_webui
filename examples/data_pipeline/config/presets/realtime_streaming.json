@@ -1,0 +1,21 @@
+{
+  "source": {
+    "type": "kafka",
+    "endpoint": "kafka-broker.internal:9092",
+    "topic_or_bucket": "events.realtime.telemetry"
+  },
+  "processing": {
+    "batch_size": 200,
+    "buffer_size": 1000,
+    "parallel_workers": 8,
+    "compression": "snappy"
+  },
+  "security": {
+    "enable_encryption": true,
+    "kms_key_id": "kms-arn-streaming-02"
+  },
+  "system_protected": {
+    "max_throughput_mb_s": 200,
+    "pipeline_cluster_id": "ETL-STREAM-KAFKA-02"
+  }
+}

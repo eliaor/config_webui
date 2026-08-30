@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Data Pipeline Configuration",
+  "type": "object",
+  "properties": {
+    "source": {
+      "title": "Data Ingestion Source",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Source Type",
+          "type": "string",
+          "enum": ["kafka", "s3", "postgresql", "rest_api"],
+          "default": "kafka"
+        },
+        "endpoint": {
+          "title": "Source Endpoint / URL",
+          "type": "string",
+          "default": "kafka-broker.internal:9092"
+        },
+        "topic_or_bucket": {
+          "title": "Topic or Bucket Name",
+          "type": "string",
+          "default": "events.telemetry.v1"
+        }
+      },
+      "required": ["type", "endpoint"]
+    },
+    "processing": {
+      "title": "Batch & Buffer Processing",
+      "type": "object",
+      "properties": {
+        "batch_size": {
+          "title": "Batch Size",
+          "type": "integer",
+          "default": 1000,
+          "minimum": 10,
+          "maximum": 50000
+        },
+        "buffer_size": {
+          "title": "Buffer Size",
+          "type": "integer",
+          "default": 5000,
+          "minimum": 20,
+          "maximum": 100000
+        },
+        "parallel_workers": {
+          "title": "Worker Threads",
+          "type": "integer",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 64
+        },
+        "compression": {
+          "title": "Compression",
+          "type": "string",
+          "enum": ["none", "gzip", "zstd", "snappy"],
+          "default": "zstd"
+        }
+      },
+      "required": ["batch_size", "buffer_size"]
+    },
+    "security": {
+      "title": "Encryption & Compliance",
+      "type": "object",
+      "properties": {
+        "enable_encryption": {
+          "title": "Enable In-Transit Encryption",
+          "type": "boolean",
+          "default": true
+        },
+        "kms_key_id": {
+          "title": "KMS Key ID",
+          "type": "string",
+          "default": "kms-arn-us-east-pipeline-992"
+        }
+      }
+    },
+    "system_protected": {
+      "title": "System Rate Limits & Quotas (Read-Only)",
+      "type": "object",
+      "properties": {
+        "max_throughput_mb_s": {
+          "title": "Max Throughput (MB/s)",
+          "type": "integer",
+          "readOnly": true,
+          "default": 250
+        },
+        "pipeline_cluster_id": {
+          "title": "Pipeline Cluster ID",
+          "type": "string",
+          "readOnly": true,
+          "default": "ETL-CLUSTER-EAST-01"
+        }
+      },
+      "required": ["pipeline_cluster_id"]
+    }
+  },
+  "required": ["source", "processing", "security", "system_protected"]
+}

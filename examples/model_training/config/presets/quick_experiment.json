@@ -1,0 +1,19 @@
+{
+  "model": {
+    "architecture": "Custom-CNN",
+    "pretrained_weights": false,
+    "num_classes": 10
+  },
+  "hyperparameters": {
+    "epochs": 3,
+    "batch_size": 64,
+    "learning_rate": 0.005,
+    "optimizer": "Adam",
+    "weight_decay": 0.0001
+  },
+  "hardware_protected": {
+    "gpu_device_id": "CPU-MOCK-DEV",
+    "max_vram_gb": 8,
+    "distributed_nodes": 1
+  }
+}

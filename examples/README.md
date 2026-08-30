@@ -1,50 +1,44 @@
-# pyConfigWebUI Examples & Demos
+# pyConfigWebUI Example Projects
 
-This directory demonstrates the recommended architectural pattern for **pyConfigWebUI**:
-- **One Unified Schema** (`schema.json`): A single, comprehensive JSON Schema covering all components (Server, Database, Caching, Logging, Features, and Admin-Protected parameters).
-- **Multiple Full Presets** (`presets/*.json`): Complete, standalone configuration profiles for different deployment tiers (Development, Staging, Production HA, and Testing CI).
-- **One Active Configuration File** (`config.json`): The single active configuration file edited in the UI and read by the application.
-
----
-
-## 📁 File Structure
-
-```
-examples/
-├── schema.json               # The single unified application schema
-├── config.json               # The single active configuration file
-├── presets/                  # Multiple complete preset configurations
-│   ├── development.json      # Local development preset (SQLite, debug logging)
-│   ├── staging.json          # Staging cluster preset (PostgreSQL, Redis)
-│   ├── production.json       # Production HA preset (high pool size, TLS, rate limits)
-│   └── testing_ci.json       # Ephemeral CI testing preset (in-memory)
-├── run_basic_editor.py       # Basic editor with preset switching & admin login
-├── run_with_custom_validation.py # Editor with custom business rule validation
-├── run_with_task_runner.py   # Editor with background service execution & live logs
-└── README.md
-```
+This directory contains standalone, self-contained project folders. Each demo project has its own dedicated folder containing:
+- `app.py`: The executable UI runner.
+- `schema/schema.json`: One unified JSON schema for the project.
+- `config/config.json`: The single active configuration file.
+- `config/presets/*.json`: Multiple complete preset configurations for instant switching.
+- `README.md`: Project-specific instructions.
 
 ---
 
-## 🚀 Running the Examples
+## 📁 Projects Overview
 
-### 1. Basic Editor with Presets & Admin Security
-Loads `schema.json`, registers all presets, and saves to `config.json`:
-```bash
-python examples/run_basic_editor.py
-```
-- Open `http://localhost:5000/` in your browser.
-- Switch between **Development**, **Staging**, **Production (High Availability)**, and **Testing (CI)**.
-- Notice `system_protected` fields are locked for guests. Click **Admin Login** (Password: `superadminsecret`) to unlock and edit them.
+### 1. [`web_service/`](web_service/)
+- **Use Case**: Enterprise Web Service & Infrastructure Manager.
+- **Key Features**: Multi-preset switching (Development, Staging, Production HA, CI Testing), locked infrastructure parameters (`readOnly: true`), Admin Login password unlock.
+- **Run**:
+  ```bash
+  python examples/web_service/app.py
+  ```
 
-### 2. Editor with Custom Multi-Field Business Validation
-Adds custom cross-field validation rules (e.g. requiring TLS in Production, validating Redis URL format):
-```bash
-python examples/run_with_custom_validation.py
-```
+### 2. [`data_pipeline/`](data_pipeline/)
+- **Use Case**: Ingestion & ETL Data Pipeline Config.
+- **Key Features**: Custom cross-field validation rules (`extra_validation_func`) enforcing buffer sizing and KMS encryption requirements.
+- **Run**:
+  ```bash
+  python examples/data_pipeline/app.py
+  ```
 
-### 3. Editor with Live Background Task Execution & Logs
-Hooks a Python startup worker to read `config.json` and stream live console logs to the web interface:
+### 3. [`model_training/`](model_training/)
+- **Use Case**: ML Model Training & Hyperparameter Tuning.
+- **Key Features**: Background task execution (`main_entry`), live terminal stdout/stderr streaming in the browser, GPU cluster quota protections.
+- **Run**:
+  ```bash
+  python examples/model_training/app.py
+  ```
+
+---
+
+## 🎯 Full Interactive Demo
+For the full end-to-end appointment booking reservation system, see the [`demo/`](../demo/) directory:
 ```bash
-python examples/run_with_task_runner.py
+python demo/demo_ui.py
 ```

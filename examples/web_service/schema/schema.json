@@ -1,7 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Application Global Configuration",
-  "description": "Unified schema for application server, database, caching, security, features, and system admin settings.",
+  "title": "Web Service Global Configuration",
   "type": "object",
   "properties": {
     "server": {
@@ -12,7 +11,7 @@
           "title": "Host Address",
           "type": "string",
           "default": "127.0.0.1",
-          "description": "Network interface to bind the application server."
+          "description": "Network interface to bind server"
         },
         "port": {
           "title": "Port Number",
@@ -29,7 +28,7 @@
           "maximum": 64
         },
         "timeout_seconds": {
-          "title": "Request Timeout (seconds)",
+          "title": "Timeout (seconds)",
           "type": "number",
           "default": 30.0,
           "minimum": 1.0,
@@ -71,15 +70,15 @@
           "default": "app_production"
         },
         "username": {
-          "title": "Database Username",
+          "title": "Username",
           "type": "string",
           "default": "db_user"
         },
         "password": {
-          "title": "Database Password",
+          "title": "Password",
           "type": "string",
           "format": "password",
-          "default": "super_secret_db_password_123"
+          "default": "super_secret_password"
         },
         "pool_size": {
           "title": "Connection Pool Size",
@@ -92,7 +91,7 @@
       "required": ["engine", "database_name"]
     },
     "caching": {
-      "title": "Caching & Session Store",
+      "title": "Caching & Sessions",
       "type": "object",
       "properties": {
         "enabled": {
@@ -112,7 +111,7 @@
           "default": "redis://localhost:6379/0"
         },
         "default_ttl_seconds": {
-          "title": "Default TTL (seconds)",
+          "title": "TTL (seconds)",
           "type": "integer",
           "default": 3600,
           "minimum": 0
@@ -141,7 +140,7 @@
           "default": "logs/app.log"
         },
         "json_format": {
-          "title": "JSON Formatted Logs",
+          "title": "JSON Format",
           "type": "boolean",
           "default": false
         }
@@ -153,12 +152,12 @@
       "type": "object",
       "properties": {
         "beta_dashboard": {
-          "title": "Enable Beta Dashboard",
+          "title": "Beta Dashboard",
           "type": "boolean",
           "default": false
         },
         "email_notifications": {
-          "title": "Enable Email Notifications",
+          "title": "Email Notifications",
           "type": "boolean",
           "default": true
         },
@@ -171,11 +170,11 @@
     },
     "system_protected": {
       "title": "System & Admin Controls (Read-Only)",
-      "description": "Critical infrastructure parameters locked for regular users. Requires Admin Login to modify.",
+      "description": "Sensitive infrastructure parameters. Requires Admin Login to edit.",
       "type": "object",
       "properties": {
         "cluster_uuid": {
-          "title": "Cluster Unique Identifier",
+          "title": "Cluster UUID",
           "type": "string",
           "readOnly": true,
           "default": "CLS-9901-PROD-US-EAST"
