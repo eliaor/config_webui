@@ -1,21 +1,21 @@
 {
-  "source": {
-    "type": "s3",
-    "endpoint": "s3.us-east-1.amazonaws.com",
-    "topic_or_bucket": "raw-data-lake-incoming"
-  },
-  "processing": {
-    "batch_size": 5000,
-    "buffer_size": 20000,
-    "parallel_workers": 16,
-    "compression": "zstd"
-  },
-  "security": {
-    "enable_encryption": true,
-    "kms_key_id": "kms-arn-lake-ingestion-01"
-  },
-  "system_protected": {
-    "max_throughput_mb_s": 500,
-    "pipeline_cluster_id": "ETL-BATCH-LAKE-01"
-  }
+    "processing": {
+        "batch_size": 5000,
+        "buffer_size": 20000,
+        "compression": "zstd",
+        "parallel_workers": 16
+    },
+    "security": {
+        "enable_encryption": true,
+        "kms_key_id": "kms-arn-lake-ingestion-01"
+    },
+    "source": {
+        "endpoint": "s3.us-east-1.amazonaws.com",
+        "topic_or_bucket": "raw-data-lake-incoming",
+        "type": "s3"
+    },
+    "system_protected": {
+        "max_throughput_mb_s": 500,
+        "pipeline_cluster_id": "ETL-BATCH-LAKE-01"
+    }
 }

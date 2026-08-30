@@ -469,24 +469,70 @@ class ConfigEditor:
     ) -> ResultStatus:
         """
         Checks if any read-only fields were modified between old and new configs.
+        A modification is permitted for a non-admin user if the read-only values in
+        new_config match the current config, any registered preset in self.presets,
+        or the schema defaults.
 
         Args:
             old_config (dict): Previous configuration data.
             new_config (dict): Proposed new configuration data.
 
         Returns:
-            ResultStatus: Success if no readonly fields were modified, False otherwise.
+            ResultStatus: Success if readonly fields match active config or a preset,
+                          False otherwise.
         """
         readonly_paths = ConfigEditor.extract_readonly_paths(self.schema)
+        if not readonly_paths:
+            return ResultStatus(True)
+
+        # 1. Check if all readonly values match old_config
+        matches_old = True
         for path in readonly_paths:
-            old_val = ConfigEditor.get_path_value(old_config, path)
-            new_val = ConfigEditor.get_path_value(new_config, path)
-            if old_val != new_val:
-                path_str = ".".join(map(str, path))
-                return ResultStatus(
-                    False,
-                    f"Field '{path_str}' is read-only. Please log in as admin to modify it.",
+            if ConfigEditor.get_path_value(old_config, path) != ConfigEditor.get_path_value(new_config, path):
+                matches_old = False
+                break
+        if matches_old:
+            return ResultStatus(True)
+
+        # 2. Check if all readonly values match ANY registered preset
+        if self.presets:
+            for preset_name, preset_cfg in self.presets.items():
+                matches_preset = True
+                for path in readonly_paths:
+                    if ConfigEditor.get_path_value(preset_cfg, path) != ConfigEditor.get_path_value(new_config, path):
+                        matches_preset = False
+                        break
+                if matches_preset:
+                    return ResultStatus(True)
+
+        # 3. Check if all readonly values match default generated schema values
+        default_cfg = ConfigEditor.generate_default_json(self.schema)
+        if default_cfg:
+            matches_default = True
+            for path in readonly_paths:
+                if ConfigEditor.get_path_value(default_cfg, path) != ConfigEditor.get_path_value(new_config, path):
+                    matches_default = False
+                    break
+            if matches_default:
+                return ResultStatus(True)
+
+        # 4. If none matched, find which field was illegally modified
+        for path in readonly_paths:
+            val_new = ConfigEditor.get_path_value(new_config, path)
+            val_old = ConfigEditor.get_path_value(old_config, path)
+            if val_new != val_old:
+                # Check if this specific field matches any preset
+                matches_any_preset = any(
+                    ConfigEditor.get_path_value(p, path) == val_new
+                    for p in (self.presets or {}).values()
                 )
+                if not matches_any_preset:
+                    path_str = ".".join(map(str, path))
+                    return ResultStatus(
+                        False,
+                        f"Field '{path_str}' is read-only. Please log in as admin to modify it.",
+                    )
+
         return ResultStatus(True)
 
     def set_schema(self, schema: dict | str | None) -> None:

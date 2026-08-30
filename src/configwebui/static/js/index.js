@@ -27,10 +27,22 @@ const terminateActionButtons = document.querySelectorAll('.terminate-action');
 const flashMessagesContent = document.querySelector('#flash-messages-content');
 
 const configFormLoadingIcon = document.querySelector('#config-form-loading-icon');
-const configFormLoadingIconBaseClassName = configFormLoadingIcon ? configFormLoadingIcon.className : '';
 const configFormContent = document.querySelector('#config-form-content');
 const configFormEdit = document.querySelector('#config-form-edit');
 const configFormContentPlaceholder = document.querySelector('#config-form-content-placeholder');
+
+function showLoadingIcon(colorClass = 'text-primary') {
+    if (configFormLoadingIcon) {
+        configFormLoadingIcon.className = `spinner-border ${colorClass}`;
+        configFormLoadingIcon.style.display = 'inline-block';
+    }
+}
+
+function hideLoadingIcon() {
+    if (configFormLoadingIcon) {
+        configFormLoadingIcon.style.display = 'none';
+    }
+}
 
 const jsonCodeExpandButton = document.querySelector('#json-code-expand');
 const jsonCodeCollapseButton = document.querySelector('#json-code-collapse');
@@ -110,21 +122,11 @@ async function getConfigAndSchema() {
         res.schema = data.schema;
         res.is_admin = data.is_admin;
         res.presets = data.presets;
-        if (data.success) {
-            if (configFormLoadingIcon) {
-                configFormLoadingIcon.className = configFormLoadingIconBaseClassName + ' text-success';
-            }
-        } else {
-            if (configFormLoadingIcon) {
-                configFormLoadingIcon.className = configFormLoadingIconBaseClassName + ' text-danger';
-            }
+        if (!data.success) {
             flashMessage('Failed to get config from server.', 'danger');
         }
     } catch (error) {
         flashMessage('Failed to get config from server.', 'danger');
-        if (configFormLoadingIcon) {
-            configFormLoadingIcon.className = configFormLoadingIconBaseClassName + ' text-danger';
-        }
     }
     return res;
 }
@@ -310,10 +312,7 @@ function toggleJsonCodeContent(action) {
 }
 
 async function initializeConfigFormEditor(keepValues = false) {
-    if (configFormLoadingIcon) {
-        configFormLoadingIcon.className = configFormLoadingIconBaseClassName + ' text-primary';
-        configFormLoadingIcon.style.display = 'inline-block';
-    }
+    showLoadingIcon('text-primary');
 
     const currentValues = (keepValues && editor) ? editor.getValue() : null;
 
@@ -359,14 +358,20 @@ async function initializeConfigFormEditor(keepValues = false) {
         if (editor_is_ready) {
             setTimeout(() => changeStyle(), 0);
             if (jsonCodeEdit) {
-                jsonCodeEdit.value = JSON.stringify(editor.getValue(), null, 4);
+                try {
+                    jsonCodeEdit.value = JSON.stringify(editor.getValue(), null, 4);
+                } catch (e) {}
             }
         }
     });
 
-    editor.on('ready', function () {
+    function onEditorReady() {
         editor_is_ready = true;
-        setTimeout(() => { changeStyle(); }, 0);
+        try {
+            changeStyle();
+        } catch (e) {
+            console.error('Error applying styles:', e);
+        }
         showConfigFormContent();
         if (hasPasswordFormat(myschema)) {
             if (jsonCodeContentPlaceholderLabel) {
@@ -379,13 +384,20 @@ async function initializeConfigFormEditor(keepValues = false) {
             toggleJsonCodeContent('show');
         }
         if (jsonCodeEdit) {
-            jsonCodeEdit.value = JSON.stringify(editor.getValue(), null, 4);
-            jsonCodeEdit.wrap = "off";
+            try {
+                jsonCodeEdit.value = JSON.stringify(editor.getValue(), null, 4);
+                jsonCodeEdit.wrap = "off";
+            } catch (e) {}
         }
-        if (configFormLoadingIcon) {
-            setTimeout(() => { configFormLoadingIcon.style.display = 'none'; }, statusIconDisappearDelay);
-        }
-    });
+        setTimeout(hideLoadingIcon, 100);
+    }
+
+    editor.on('ready', onEditorReady);
+    if (editor.ready) {
+        onEditorReady();
+    }
+    // Safety fallback: ensure loading icon is hidden
+    setTimeout(hideLoadingIcon, 600);
 }
 
 async function saveConfig() {
@@ -432,10 +444,9 @@ async function applySelectedPreset() {
         return;
     }
 
+    showLoadingIcon('text-primary');
+
     try {
-        // POST to server to apply preset (server uses is_admin=True internally for presets).
-        // This updates the server's in-memory config so a subsequent guest Save won't be
-        // blocked by readOnly change detection (the server config now matches the preset).
         const applyResponse = await fetch(`/api/presets/${encodeURIComponent(selectedPreset)}/apply`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -443,11 +454,11 @@ async function applySelectedPreset() {
         });
         const applyData = await applyResponse.json();
         if (!applyData.success) {
+            hideLoadingIcon();
             flashMessage(`Failed to apply preset "${selectedPreset}": ${(applyData.messages || []).join(' ')}`, 'danger');
             return;
         }
 
-        // Reload editor from the freshly-applied server config (and correct schema for admin status).
         await initializeConfigFormEditor(false);
 
         flashMessage(
@@ -456,6 +467,7 @@ async function applySelectedPreset() {
             'success'
         );
     } catch (error) {
+        hideLoadingIcon();
         flashMessage('Failed to apply preset from server.', 'danger');
     }
 }
@@ -530,6 +542,12 @@ saveActionButtons.forEach(button => {
         await saveConfig();
     });
 });
+
+if (presetSelect) {
+    presetSelect.addEventListener('change', async () => {
+        await applySelectedPreset();
+    });
+}
 
 if (applyPresetBtn) {
     applyPresetBtn.addEventListener('click', async () => {
