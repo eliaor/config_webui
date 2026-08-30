@@ -4,7 +4,10 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from demo import demo_main
-from src.configwebui import ConfigEditor
+try:
+    from configwebui import ConfigEditor
+except ImportError:
+    from src.configwebui import ConfigEditor
 
 CONFIG_FILE = "demo/config/main.json"
 SCHEMA_FILE = "demo/schema/main.json"

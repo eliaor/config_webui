@@ -1,133 +1,250 @@
 # pyConfigWebUI
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lucienshawls/py-config-web-ui)
-[![Build Status](https://github.com/lucienshawls/py-config-web-ui/actions/workflows/release.yml/badge.svg)](https://github.com/lucienshawls/py-config-web-ui/actions/workflows/release.yml)
 [![License](https://img.shields.io/github/license/lucienshawls/py-config-web-ui)](LICENSE)
-[![Latest Release Tag](https://img.shields.io/github/v/release/lucienshawls/py-config-web-ui)](https://github.com/lucienshawls/py-config-web-ui/releases/latest)
-[![Latest PyPI Version](https://img.shields.io/pypi/v/configwebui-lucien.svg)](https://pypi.org/project/configwebui-lucien/)
+[![Latest Release](https://img.shields.io/github/v/release/lucienshawls/py-config-web-ui)](https://github.com/lucienshawls/py-config-web-ui/releases/latest)
+[![PyPI Version](https://img.shields.io/pypi/v/configwebui-lucien.svg)](https://pypi.org/project/configwebui-lucien/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/configwebui-lucien.svg)](https://pypi.org/project/configwebui-lucien/)
 
-A modern, simple, web-based configuration editor for Python applications.
+A modern, lightweight, web-based configuration editor for Python applications.
 
-This package provides an interactive web UI for editing a single global configuration file (JSON/YAML/Dict) with preset configuration switching, JSON schema validation, offline capabilities, admin mode for unlocking read-only variables, and real-time program execution logs.
-
----
-
-## Key Features
-
-- **Single Global Configuration File**: Directly edit and persist a specified configuration file with real-time UI synchronization.
-- **100% Offline Capable**: All CSS, JavaScript, icons, and web fonts are bundled locally. **Zero internet connection or external CDN required.**
-- **Configuration Presets**: Easily define and switch between preset configurations (e.g. *Default*, *Production*, *Testing*) to overwrite the editor state in one click.
-- **Admin Login & Read-Only Variable Override**:
-  - Secure sensitive or system parameters with `"readOnly": true` in the schema.
-  - Guest users see read-only fields disabled.
-  - Log in via the **Admin Login** button to unlock and freely modify all read-only fields.
-- **Real-Time Schema Validation**: Automatic form generation and validation directly against your standard [JSON Schema](https://json-schema.org/), plus support for custom backend validation.
-- **Live JSON Preview**: Synchronized interactive JSON code view with expand/collapse options and automatic masking for password fields.
-- **Interactive Terminal Output**: Launch your main Python entry point in a background thread and view real-time captured stdout/stderr directly in the browser.
-- **Graceful Lifecycle Management**: Terminate the local web server cleanly directly from the UI or via keyboard interrupt.
+**pyConfigWebUI** turns standard JSON Schemas and configuration files into an interactive, user-friendly web interface with preset configuration switching, real-time schema validation, side-by-side JSON preview, and role-based Admin Mode for unlocking restricted variables.
 
 ---
 
-## Quick Start
+## 🌟 Key Features
 
-### 1. Installation
+- 🔒 **100% Offline by Design**: All CSS (Bootstrap 5), JavaScript (JSONEditor, jQuery Slim), icons (FontAwesome), and web fonts are bundled directly in the package. **Zero internet connection or external CDN required.** Ideal for air-gapped environments, devcontainers, HPC clusters, and local deployments.
+- 🎛️ **Configuration Presets**: Easily register and switch between named preset configurations (e.g. *Default*, *Development*, *Production*, *High-Performance*) from memory dicts or JSON files in one click.
+- 🛡️ **Admin Mode & Read-Only Variable Locking**:
+  - Secure critical or system parameters by marking them `"readOnly": true` in your JSON Schema.
+  - Guest users view read-only fields as disabled and cannot tamper with them.
+  - Authenticate with **Admin Login** to instantly unlock and modify restricted settings.
+- 📝 **Side-by-Side Live UI & JSON Preview**: Modern split-view with form controls on the left and synchronized formatted JSON preview on the right.
+- 🔍 **Multi-Level Validation**:
+  - Real-time client-side input validation based on standard [JSON Schema](https://json-schema.org/).
+  - Server-side schema validation with `jsonschema`.
+  - Custom cross-field validation rules via `extra_validation_func`.
+- 🔌 **Flexible Storage Handlers**: Persist to default JSON files or integrate custom `save_func` / `load_func` (YAML, SQLite, Redis, cloud stores).
+- 🚀 **Interactive Task Runner**: Hook a `main_entry` callable to run background tasks with live streamed terminal logs (stdout / stderr) directly in the browser.
+- 🛑 **Graceful Lifecycle Management**: Clean server termination from the UI navbar or via terminal interrupt (`Ctrl+C`).
 
-Install via pip from PyPI:
-```shell
+---
+
+## 📦 Installation
+
+### From PyPI
+```bash
 pip install configwebui-lucien
 ```
 
-Or install from source:
-```shell
-git clone https://github.com/lucienshawls/py-config-web-ui
+### From Source
+```bash
+git clone https://github.com/lucienshawls/py-config-web-ui.git
 cd py-config-web-ui
 pip install -r requirements.txt
 ```
 
-### 2. Try the Demo
-
-Run the included demo:
-```shell
-python demo/demo_ui.py
-```
-Open your browser at `http://localhost:5000/` (or the URL printed in the terminal).
-
 ---
 
-## Usage Example
+## 🚀 Quick Start (in 30 Seconds)
+
+Create a file `app.py`:
 
 ```python
-from configwebui import ConfigEditor, ResultStatus
+from configwebui import ConfigEditor
 
-
-# 1. Define JSON Schema (with readOnly fields if needed)
 schema = {
-    "title": "Application Configuration",
+    "title": "Application Config",
     "type": "object",
     "properties": {
-        "server_port": {
-            "title": "Server Port",
-            "type": "integer",
-            "default": 8080,
-        },
-        "debug_mode": {"title": "Debug Mode", "type": "boolean", "default": False},
-        "api_endpoint": {
-            "title": "API Endpoint (Read-Only)",
-            "type": "string",
-            "readOnly": True,
-            "default": "https://api.internal.production",
-        },
+        "server_host": {"title": "Host", "type": "string", "default": "127.0.0.1"},
+        "server_port": {"title": "Port", "type": "integer", "default": 8080, "minimum": 1, "maximum": 65535},
+        "debug_mode": {"title": "Debug Mode", "type": "boolean", "default": True},
     },
-    "required": ["server_port"],
+    "required": ["server_host", "server_port"],
 }
 
-# 2. Define optional main entry point
-def my_main_program():
-    print("Main program starting...")
-    # Your application logic reading from config/main.json
-    print("Application executed successfully.")
-    return ResultStatus(True)
-
-# 3. Instantiate ConfigEditor
 editor = ConfigEditor(
-    app_name="My App Config",
-    config_file="config/main.json",
+    app_name="App Config Editor",
+    config_file="config.json",
     schema=schema,
-    presets={
-        "Default": "presets/default.json",
-        "Production": {"server_port": 443, "debug_mode": False},
-    },
-    admin_password="secretadminpassword",
-    main_entry=my_main_program,
 )
 
-# 4. Start the Web UI
 if __name__ == "__main__":
     editor.run(host="127.0.0.1", port=5000)
 ```
 
----
-
-## Architecture & How It Works
-
+Run the application:
+```bash
+python app.py
 ```
-JSON Schema / File ──► ConfigEditor (Presets + Admin Mode) ──► Local Offline Web UI
-                              │
-                    ┌─────────┴─────────┐
-                    ▼                   ▼
-             Global Config File   Main Entry (Runner)
-```
-
-1. **`ConfigEditor`**: The core orchestrator that binds your configuration file, schema, presets, admin password, and main application runner into a local Flask web application.
-2. **Presets**: Stored in memory or loaded from JSON files. Selecting a preset overwrites the active editor config.
-3. **Admin Mode**:
-   - Guests receive the standard schema with `readOnly: true` applied.
-   - Admin authentication sets an encrypted session. In Admin mode, `readOnly` flags are dynamically stripped from the schema, enabling editing of all locked properties.
-4. **ProgramRunner**: Hijacks stdout and stderr for the main entry execution thread, providing real-time log polling and terminal output in the browser.
+Open `http://127.0.0.1:5000` in your browser.
 
 ---
 
-## API Reference: `ConfigEditor`
+## 📸 Screenshots & Workflow
+
+### 1. Guest View (Read-Only Fields Protected)
+Guest users can modify editable fields, but restricted parameters remain locked.
+![Guest View](docs/guest_view.png)
+
+### 2. Admin View (Unlocked Fields)
+Logging in with the admin password removes read-only restrictions and permits changes to all settings.
+![Admin View](docs/admin_view.png)
+
+---
+
+## 📚 Feature Guides & Recipes
+
+### 1. Configuration Presets
+
+Presets let users quickly switch between pre-configured parameter profiles:
+
+```python
+presets = {
+    "Development": {
+        "server_host": "127.0.0.1",
+        "server_port": 8000,
+        "debug_mode": True,
+    },
+    "Production": "presets/prod.json",  # File path or dict
+}
+
+editor = ConfigEditor(
+    app_name="Server Manager",
+    config_file="config/main.json",
+    schema=schema,
+    presets=presets,
+    default_preset="Development",
+)
+```
+
+### 2. Admin Mode & Field Locking
+
+To protect sensitive variables (API keys, cluster IDs, infrastructure endpoints), set `"readOnly": true` in the schema definition:
+
+```python
+schema = {
+    "type": "object",
+    "properties": {
+        "app_title": {"type": "string", "default": "My App"},
+        "system_uuid": {
+            "title": "System UUID (Protected)",
+            "type": "string",
+            "default": "SYS-9812-PROD",
+            "readOnly": True,  # Locked for guests, unlocked for Admin
+        },
+    },
+}
+
+editor = ConfigEditor(
+    app_name="Secured Config",
+    schema=schema,
+    admin_password="my-secure-password",  # Admin login password
+)
+```
+
+### 3. Custom Business Validation
+
+Use `extra_validation_func` to enforce multi-field dependencies and custom domain rules:
+
+```python
+from configwebui import ResultStatus
+
+def validate_pipeline_config(config: dict) -> ResultStatus:
+    batch_size = config.get("batch_size", 0)
+    buffer_size = config.get("buffer_size", 0)
+
+    if buffer_size < batch_size * 2:
+        return ResultStatus(
+            False,
+            f"Buffer size ({buffer_size}) must be at least 2x batch size ({batch_size * 2})!"
+        )
+    return ResultStatus(True)
+
+editor = ConfigEditor(
+    app_name="Pipeline Editor",
+    schema=schema,
+    extra_validation_func=validate_pipeline_config,
+)
+```
+
+### 4. Custom Storage (YAML, SQLite, Redis, Database)
+
+Override default JSON file persistence by providing `save_func` and `load_func`:
+
+```python
+import yaml
+from configwebui import ResultStatus
+
+def load_yaml_config() -> dict:
+    with open("config.yaml", "r") as f:
+        return yaml.safe_load(f) or {}
+
+def save_yaml_config(config: dict) -> ResultStatus:
+    with open("config.yaml", "w") as f:
+        yaml.safe_dump(config, f, sort_keys=False)
+    return ResultStatus(True, "Saved to YAML successfully.")
+
+editor = ConfigEditor(
+    app_name="YAML Config Editor",
+    schema=schema,
+    load_func=load_yaml_config,
+    save_func=save_yaml_config,
+)
+```
+
+### 5. Running Main Program & Streaming Logs
+
+Hook your main application entry point to execute directly from the web interface:
+
+```python
+import time
+from configwebui import ResultStatus
+
+def run_backup_task():
+    print("Starting database backup...")
+    for i in range(1, 4):
+        time.sleep(1)
+        print(f"Backing up partition {i}/3...")
+    print("Backup completed successfully!")
+    return ResultStatus(True)
+
+editor = ConfigEditor(
+    app_name="Backup Manager",
+    config_file="backup_config.json",
+    schema=schema,
+    main_entry=run_backup_task,
+)
+```
+
+---
+
+## 📂 Runnable Examples
+
+Explore the complete runnable examples in the [`examples/`](examples/) directory:
+
+- [`example_01_basic_usage.py`](examples/example_01_basic_usage.py): Minimal quick start with schema validation.
+- [`example_02_presets_and_admin_mode.py`](examples/example_02_presets_and_admin_mode.py): Configuration preset switching and Admin unlocking.
+- [`example_03_custom_validation_and_storage.py`](examples/example_03_custom_validation_and_storage.py): Custom validation and custom persistence.
+- [`example_04_task_execution_with_logs.py`](examples/example_04_task_execution_with_logs.py): Background tasks with live terminal logs.
+- [`example_05_rich_schema_forms.py`](examples/example_05_rich_schema_forms.py): Advanced form controls (arrays, nested objects, passwords, textareas).
+
+Run any example:
+```bash
+python examples/example_01_basic_usage.py
+```
+
+Or run the interactive reservation system demo:
+```bash
+python demo/demo_ui.py
+```
+
+---
+
+## 🛠️ Complete API Reference
+
+### `ConfigEditor`
 
 ```python
 ConfigEditor(
@@ -145,22 +262,92 @@ ConfigEditor(
 )
 ```
 
-### Parameters
+#### Constructor Parameters
 
-- `app_name` (*str*): Display name in the web interface title and navigation bar.
-- `config_file` (*str | None*): Path to the global configuration file to edit and save.
-- `schema` (*dict | str | None*): JSON schema dictionary or path to a JSON schema file.
-- `config` (*dict | None*): Initial configuration dictionary (defaults to reading `config_file` or generating defaults from `schema`).
-- `presets` (*dict[str, dict | str] | None*): Mapping of preset names to configuration dictionaries or preset JSON file paths.
-- `default_preset` (*str | None*): Name of the preset to load initially if no config file exists.
-- `admin_password` (*str*): Password for logging into Admin Mode (default: `"admin"`).
-- `extra_validation_func` (*Callable | None*): Custom validation callable `func(config) -> ResultStatus | bool`.
-- `save_func` (*Callable | None*): Custom save function `func(config) -> ResultStatus | bool`.
-- `load_func` (*Callable | None*): Custom load function `func() -> dict`.
-- `main_entry` (*Callable | None*): Main entry point to execute when "Launch main program" is clicked.
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `app_name` | `str` | `"Config Editor"` | Application display name shown in navbar and browser title. |
+| `config_file` | `str \| None` | `None` | Path to persistent configuration JSON file. |
+| `schema` | `dict \| str \| None` | `None` | JSON Schema dictionary or path to a schema `.json` file. |
+| `config` | `dict \| None` | `None` | Initial configuration data (overrides file/defaults). |
+| `presets` | `dict[str, dict \| str] \| None` | `None` | Dictionary mapping preset names to config dicts or file paths. |
+| `default_preset` | `str \| None` | `None` | Preset name to load initially if no config file exists. |
+| `admin_password` | `str` | `"admin"` | Password for unlocking read-only fields via Admin Login. |
+| `extra_validation_func` | `Callable \| None` | `None` | Custom validation function: `func(config) -> ResultStatus \| bool`. |
+| `save_func` | `Callable \| None` | `None` | Custom persistence function: `func(config) -> ResultStatus \| bool`. |
+| `load_func` | `Callable \| None` | `None` | Custom loader function: `func() -> dict`. |
+| `main_entry` | `Callable \| None` | `None` | Task callable executed when running the main program. |
+
+#### Methods
+
+- `run(host="localhost", port=80)`: Starts the web server and opens the browser.
+- `get_config() -> dict`: Returns a deep copy of the current configuration dictionary.
+- `set_config(config, skip_schema_validations=False, skip_extra_validations=False, save_file=False, is_admin=False) -> ResultStatus`: Updates and validates configuration.
+- `get_schema(is_admin=False) -> dict`: Returns the JSON schema (with `readOnly` stripped if `is_admin=True`).
+- `set_schema(schema: dict | str | None)`: Updates the active JSON schema.
+- `add_preset(name: str, preset: dict | str)`: Adds a new preset configuration.
+- `get_presets() -> dict[str, dict]`: Returns all registered preset configurations.
+- `get_preset_names() -> list[str]`: Returns names of available presets.
+- `apply_preset(name: str, save_file=False) -> ResultStatus`: Applies a preset configuration.
+- `check(config, skip_schema_validations=False, skip_extra_validations=False, is_admin=False) -> ResultStatus`: Validates configuration data.
+- `save(config=None) -> ResultStatus`: Persists configuration to file or via `save_func`.
+- `load() -> dict`: Reloads configuration from storage.
+- `verify_admin_password(password: str) -> bool`: Verifies admin authentication password.
+- `set_admin_password(password: str)`: Updates admin password.
+- `stop_server()`: Stops the web server.
+- `clean_up()`: Cleans up server threads and restores standard output streams.
 
 ---
 
-## License
+### `ResultStatus`
+
+Helper class returned by validation and execution operations:
+
+```python
+from configwebui import ResultStatus
+
+# Success
+res = ResultStatus(True, "Saved successfully.")
+
+# Failure
+res = ResultStatus(False, "Port number must be between 1 and 65535.")
+
+# Methods
+res.get_status()    # -> bool
+res.get_messages()  # -> list[str]
+```
+
+---
+
+## 🛡️ Offline Assurance
+
+`pyConfigWebUI` does not load any fonts, icons, CSS, or JS from third-party CDNs. All frontend assets are packaged inside `configwebui/static/`:
+- **Bootstrap 5.3.3** CSS & JS
+- **JSONEditor 2.15.1** JS
+- **jQuery Slim 3.7.1** JS
+- **FontAwesome 5.15.4** CSS & WebFonts (`.woff2`, `.woff`, `.ttf`, `.eot`, `.svg`)
+
+You can verify full offline support by running the offline test suite:
+```bash
+python -m unittest tests/test_offline.py
+```
+
+---
+
+## 🔨 Building the Pip Package
+
+To build the source distribution (`.tar.gz`) and wheel (`.whl`):
+
+```bash
+python -m build --no-isolation
+```
+
+The built distributions will be located in the `dist/` directory:
+- `dist/configwebui_lucien-<version>-py3-none-any.whl`
+- `dist/configwebui_lucien-<version>.tar.gz`
+
+---
+
+## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).

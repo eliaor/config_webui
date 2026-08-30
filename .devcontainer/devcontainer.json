@@ -1,0 +1,33 @@
+{
+    "name": "Devcontainer",
+    // "image": "",
+    "build": {
+        "context": "..",
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.debugpy",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.isort",
+            ]
+        }
+    },
+    "mounts":[
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+        "source=${localEnv:HOME}/.gitconfig,target=/home/vscode//.gitconfig,type=bind,readonly",
+    ],
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+    },
+    "runArgs": [
+        "--network=host",
+    ],
+    "initializeCommand": "xhost +local:docker",
+    "postCreateCommand": ".devcontainer/setup_devcontainer.sh",
+
+    // "remoteUser": "vscode"
+}

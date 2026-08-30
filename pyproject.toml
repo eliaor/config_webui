@@ -9,8 +9,7 @@ requires-python = ">=3.10"
 authors = [{ name = "Lucien Shaw", email = "myxlc55@outlook.com" }]
 description = "A simple web-based configuration editor for Python applications."
 readme = { file = "README.md", content-type = "text/markdown" }
-license = "MIT"
-license-files = ["LICENSE"]
+license = { text = "MIT" }
 keywords = [
     "configuration",
     "editor",
