@@ -1,0 +1,29 @@
+{
+    "user_credential": {
+        "username": "Charlie",
+        "password": "Charlie_VIP_999"
+    },
+    "applicant_information": {
+        "name": "Charlie Davis",
+        "age": 42,
+        "gender": "Other",
+        "email": "charlie.davis@example.com",
+        "phone": "+1 5553334444"
+    },
+    "reservation_detail": {
+        "reservation_date": "2026-10-01",
+        "reservation_time_start": "10:00",
+        "reservation_time_end": "16:00",
+        "reservation_purpose": [
+            "Interview",
+            "Consult"
+        ],
+        "notes": "VIP executive interview and consulting session."
+    },
+    "system_settings": {
+        "system_id": "SYS-VIP-PRIORITY",
+        "server_environment": "Production",
+        "max_reservations_per_day": 5,
+        "admin_access_token": "adm_sec_vip_token"
+    }
+}

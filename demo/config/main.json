@@ -1,5 +1,29 @@
 {
-    "applicant_information": "Charlie",
-    "reservation_detail": "Christmas",
-    "user_credential": "Bob"
+    "applicant_information": {
+        "age": 34,
+        "email": "bob.j@example.com",
+        "gender": "Male",
+        "name": "Bob Johnson",
+        "phone": "+1 5559876543"
+    },
+    "reservation_detail": {
+        "notes": "Christmas special event booking with holiday catering.",
+        "reservation_date": "2026-12-25",
+        "reservation_purpose": [
+            "Visit",
+            "Consult"
+        ],
+        "reservation_time_end": "18:00",
+        "reservation_time_start": "14:00"
+    },
+    "system_settings": {
+        "admin_access_token": "adm_sec_xmas2026",
+        "max_reservations_per_day": 20,
+        "server_environment": "Staging",
+        "system_id": "SYS-ADMIN-OVERRIDE-2026"
+    },
+    "user_credential": {
+        "password": "Bob_Christmas2026",
+        "username": "Bob"
+    }
 }

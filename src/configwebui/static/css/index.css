@@ -76,8 +76,14 @@ h2>.spinner-border {
     transform: scale(0.75);
 }
 
+#preset-container .btn-group,
 #profile-container .btn-group {
     white-space: nowrap;
+}
+
+#admin-badge {
+    font-size: 0.85rem;
+    letter-spacing: 0.02rem;
 }
 
 #config-form-edit .editor-check {

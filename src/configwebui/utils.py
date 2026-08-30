@@ -376,12 +376,10 @@ class ProgramRunner:
         """
         thread_id = threading.current_thread().name
         try:
-            assert isinstance(
-                sys.stdout, ThreadOutputStream
-            ), "Failed to hijack stdout."
-            assert isinstance(
-                sys.stderr, ThreadOutputStream
-            ), "Failed to hijack stderr."
+            if not isinstance(sys.stdout, ThreadOutputStream):
+                sys.stdout = ThreadOutputStream(base_stream=BASE_OUTPUT_STREAM)
+            if not isinstance(sys.stderr, ThreadOutputStream):
+                sys.stderr = ThreadOutputStream(base_stream=BASE_ERROR_STREAM)
             sys.stdout.add_stream(
                 thread_id=thread_id,
                 stream=self.io_out,

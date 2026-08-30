@@ -1,3 +1,18 @@
+## v0.4.0 (2026-08-30)
+
+### BREAKING CHANGE
+
+- Redesigned architecture from multiple `UserConfig` profiles to a single online global configuration file editor.
+
+### Feat
+
+- Single global configuration file management directly in `ConfigEditor`.
+- 100% offline capability with all CSS, JS, icons, and web fonts bundled locally (zero external CDN or internet required).
+- Presets support: define and select preset configurations to overwrite the active editor config.
+- Admin Mode & Login: authenticate with an admin password to unlock and modify `readOnly` schema variables.
+- Interactive terminal output and main entry execution in background threads.
+- Real-time schema validation with custom extra validation support.
+
 ## v0.3.1-beta.1 (2025-07-30)
 
 ## v0.3.0 (2025-07-28)

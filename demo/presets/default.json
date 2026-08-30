@@ -1,0 +1,29 @@
+{
+    "user_credential": {
+        "username": "Alice",
+        "password": "Alice_123456"
+    },
+    "applicant_information": {
+        "name": "Alice Smith",
+        "age": 28,
+        "gender": "Female",
+        "email": "alice.smith@example.com",
+        "phone": "+1 5551234567"
+    },
+    "reservation_detail": {
+        "reservation_date": "2026-09-15",
+        "reservation_time_start": "09:00",
+        "reservation_time_end": "11:30",
+        "reservation_purpose": [
+            "Consult",
+            "Testing"
+        ],
+        "notes": "Standard consultation and testing appointment."
+    },
+    "system_settings": {
+        "system_id": "SYS-PROD-2026-08",
+        "server_environment": "Production",
+        "max_reservations_per_day": 100,
+        "admin_access_token": "adm_sec_993881726"
+    }
+}
