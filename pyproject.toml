@@ -3,10 +3,10 @@ requires = ["setuptools", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "configwebui-lucien"
+name = "config_webui"
 dependencies = ["Flask", "jsonschema"]
 requires-python = ">=3.10"
-authors = [{ name = "Lucien Shaw", email = "myxlc55@outlook.com" }]
+authors = [{ name = "Garage", email = "garage@garage.com" }]
 description = "A simple web-based configuration editor for Python applications."
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { text = "MIT" }
